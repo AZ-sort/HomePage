@@ -441,7 +441,44 @@
     transform: translateY(0);
   }
 
-  /* ── FOOTER ── */
+  .tool-sub-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 16px 16px 52px;
+    border-bottom: 1px solid var(--border);
+    text-decoration: none;
+    color: var(--muted2);
+    font-size: 12px;
+    font-weight: 400;
+    background: var(--cream);
+    opacity: 0;
+    transform: translateY(16px);
+    transition: color 0.15s, opacity 0.5s ease, transform 0.5s ease;
+    margin-top: -8px;
+  }
+
+  .tool-sub-link.visible { opacity: 1; transform: translateY(0); }
+  .tool-sub-link:hover { color: var(--terra); }
+
+  .tool-sub-arrow {
+    width: 22px; height: 22px;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px;
+    color: var(--muted2);
+    flex-shrink: 0;
+    transition: all 0.15s;
+    margin-left: auto;
+  }
+
+  .tool-sub-link:hover .tool-sub-arrow {
+    border-color: var(--terra);
+    color: var(--terra);
+  }
+
+  .tool-sub-label { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted2); margin-right: 2px; }
   .footer {
     background: var(--black);
     border-top: 2px solid var(--terra);
@@ -608,6 +645,12 @@
       <div class="tool-arrow-circle">↗</div>
     </a>
 
+    <a class="tool-sub-link" href="https://az-sort.github.io/MediaTracker/" target="_blank" rel="noopener">
+      <span class="tool-sub-label">Also</span>
+      Media Penetration <em style="font-style:italic;color:var(--terra);margin-left:3px;">Over Time</em> — compare waves on a line graph
+      <div class="tool-sub-arrow">↗</div>
+    </a>
+
   </div>
 </div>
 
@@ -654,7 +697,7 @@
   onScroll();
 
   // ── Tool row scroll reveal ────────────────────────────
-  const rows = document.querySelectorAll('.tool-row');
+  const rows = document.querySelectorAll('.tool-row, .tool-sub-link');
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry, i) => {
       if (entry.isIntersecting) {
