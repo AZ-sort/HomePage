@@ -3,13 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AZ-Sort</title>
+<title>AZ-Sort — Analytics Tool Suite</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;1,9..144,300;1,9..144,700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,700;1,9..144,300;1,9..144,700&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
     --cream:      #faf7f2;
     --cream2:     #f2ece2;
+    --cream3:     #ede6d8;
+    --white:      #ffffff;
     --black:      #1a1714;
     --text:       #2a2420;
     --muted:      #7a6f68;
@@ -17,6 +19,7 @@
     --terra:      #c45c3a;
     --terra-soft: #faf0ec;
     --terra-mid:  #d97050;
+    --terra-dark: #a84830;
     --border:     #e4ddd4;
     --border2:    #cec5ba;
   }
@@ -33,16 +36,21 @@
     overflow-x: hidden;
   }
 
-  /* NAV */
+  /* ── NAV ── */
   nav {
-    position: sticky;
-    top: 0; z-index: 50;
-    background: var(--black);
-    border-bottom: 2px solid var(--terra);
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
     height: 52px;
     display: flex;
     align-items: center;
     padding: 0 40px;
+    transition: background 0.3s, box-shadow 0.3s;
+  }
+
+  nav.scrolled {
+    background: var(--black);
+    box-shadow: 0 1px 0 rgba(196,92,58,0.5);
   }
 
   .nav-inner {
@@ -58,20 +66,17 @@
     font-family: 'Fraunces', serif;
     font-size: 18px;
     font-weight: 700;
-    color: #ffffff;
+    color: rgba(255,255,255,0.9);
     letter-spacing: -0.02em;
   }
 
-  .wordmark em {
-    font-style: italic;
-    color: var(--terra-mid);
-    font-weight: 300;
-  }
+  .wordmark em { font-style: italic; color: var(--terra-mid); font-weight: 300; }
 
   .nav-links {
     display: flex;
-    gap: 24px;
+    gap: 28px;
     list-style: none;
+    align-items: center;
   }
 
   .nav-links a {
@@ -79,43 +84,80 @@
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    color: rgba(255,255,255,0.35);
+    color: rgba(255,255,255,0.4);
     text-decoration: none;
     transition: color 0.15s;
   }
 
-  .nav-links a:hover { color: rgba(255,255,255,0.8); }
+  .nav-links a:hover { color: rgba(255,255,255,0.9); }
 
-  /* HERO */
+  .nav-github {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 4px;
+    transition: border-color 0.15s, background 0.15s !important;
+  }
+
+  .nav-github:hover {
+    border-color: var(--terra-mid) !important;
+    color: var(--terra-mid) !important;
+    background: rgba(196,92,58,0.08) !important;
+  }
+
+  /* ── HERO ── */
   .hero {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
-    padding: 0 40px 64px;
+    justify-content: center;
+    padding: 80px 40px 72px;
     background: var(--black);
     position: relative;
     overflow: hidden;
   }
 
-  /* Dot grid */
+  /* Subtle noise texture */
   .hero::before {
     content: '';
     position: absolute;
     inset: 0;
-    background-image: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
-    background-size: 28px 28px;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 32px 32px;
     pointer-events: none;
+    z-index: 0;
   }
 
-  /* Warm glow */
-  .hero::after {
-    content: '';
+  /* Terracotta glow — bottom right, defined below */
+  .hero-glow {
     position: absolute;
-    bottom: -100px; right: -100px;
-    width: 600px; height: 600px;
-    background: radial-gradient(circle, rgba(196,92,58,0.2) 0%, transparent 65%);
+    bottom: -160px; right: -160px;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(196,92,58,0.22) 0%, transparent 60%);
     pointer-events: none;
+    z-index: 0;
+  }
+
+  .hero-glow {
+    position: absolute;
+    bottom: -160px; right: -160px;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(196,92,58,0.22) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+    transition: transform 0.6s cubic-bezier(0.16,1,0.3,1);
+  }
+
+  .hero-glow2 {
+    position: absolute;
+    top: -80px; left: -80px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(196,92,58,0.07) 0%, transparent 65%);
+    pointer-events: none;
+    z-index: 0;
+    transition: transform 0.8s cubic-bezier(0.16,1,0.3,1);
   }
 
   .hero-inner {
@@ -128,32 +170,36 @@
 
   .hero-kicker {
     font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.12em;
+    font-size: 10px;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
     color: var(--terra-mid);
-    margin-bottom: 20px;
+    margin-bottom: 24px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
+    opacity: 0;
+    animation: fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.1s forwards;
   }
 
   .hero-kicker::before {
     content: '';
     display: block;
-    width: 28px;
+    width: 32px;
     height: 1px;
     background: var(--terra-mid);
   }
 
   h1 {
     font-family: 'Fraunces', serif;
-    font-size: clamp(64px, 11vw, 140px);
+    font-size: clamp(60px, 10vw, 128px);
     font-weight: 700;
     line-height: 0.93;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.025em;
     color: #ffffff;
-    margin-bottom: 32px;
+    margin-bottom: 36px;
+    opacity: 0;
+    animation: fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.2s forwards;
   }
 
   h1 em {
@@ -163,162 +209,243 @@
     display: block;
   }
 
+  .hero-bottom {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 32px;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) 0.38s forwards;
+  }
+
   .hero-desc {
     font-size: 14px;
-    color: rgba(255,255,255,0.4);
+    color: rgba(255,255,255,0.38);
     font-weight: 300;
-    line-height: 1.75;
-    max-width: 380px;
-    margin-bottom: 40px;
+    line-height: 1.8;
+    max-width: 360px;
   }
 
   .hero-cta {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
+    padding: 12px 24px;
+    background: var(--terra);
+    color: #ffffff;
     font-size: 12px;
-    font-weight: 500;
-    letter-spacing: 0.06em;
-    color: rgba(255,255,255,0.6);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
     text-decoration: none;
-    border-bottom: 1px solid rgba(255,255,255,0.15);
-    padding-bottom: 4px;
-    transition: color 0.15s, border-color 0.15s;
+    border-radius: 4px;
+    transition: background 0.15s, transform 0.15s;
+    flex-shrink: 0;
   }
 
-  .hero-cta:hover { color: var(--terra-mid); border-color: var(--terra-mid); }
+  .hero-cta:hover { background: var(--terra-dark); transform: translateY(-2px); }
+  .hero-cta:active { transform: translateY(0); }
 
-  /* TOOLS SECTION */
+  .hero-cta-arrow {
+    display: inline-block;
+    animation: bounce 1.8s ease infinite 1.5s;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(3px); }
+  }
+
+  /* ── SCROLL INDICATOR ── */
+  .scroll-hint {
+    position: absolute;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    opacity: 0;
+    animation: fadeIn 1s ease 1.2s forwards;
+    z-index: 1;
+  }
+
+  .scroll-hint-line {
+    width: 1px;
+    height: 32px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.2));
+    animation: scrollPulse 2s ease infinite;
+  }
+
+  .scroll-hint-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    color: rgba(255,255,255,0.2);
+    text-transform: uppercase;
+  }
+
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
+  }
+
+  /* ── TOOLS SECTION ── */
   .tools-section {
     background: var(--cream);
     padding: 80px 40px 100px;
+    position: relative;
   }
 
-  .tools-inner {
-    max-width: 1000px;
-    margin: 0 auto;
-  }
+  .tools-inner { max-width: 1000px; margin: 0 auto; }
 
   .section-header {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    border-bottom: 1px solid var(--border2);
-    padding-bottom: 20px;
+    border-bottom: 1.5px solid var(--black);
+    padding-bottom: 16px;
     margin-bottom: 0;
   }
 
   .section-title {
     font-family: 'Fraunces', serif;
-    font-size: 42px;
+    font-size: 38px;
     font-weight: 700;
     letter-spacing: -0.025em;
     color: var(--black);
     line-height: 1;
   }
 
-  .section-title em {
-    font-style: italic;
-    font-weight: 300;
-    color: var(--terra);
-  }
+  .section-title em { font-style: italic; font-weight: 300; color: var(--terra); }
 
   .section-count {
     font-family: 'DM Mono', monospace;
     font-size: 11px;
     color: var(--muted2);
     letter-spacing: 0.06em;
+    align-self: flex-end;
   }
 
-  /* TOOL ROWS */
+  /* ── TOOL ROWS ── */
   .tool-row {
-    display: flex;
+    display: grid;
+    grid-template-columns: 28px 1fr auto;
     align-items: center;
-    justify-content: space-between;
-    gap: 32px;
-    padding: 32px 0;
+    gap: 24px;
+    padding: 28px 16px;
     border-bottom: 1px solid var(--border);
     text-decoration: none;
     color: inherit;
     cursor: pointer;
-    transition: background 0.15s;
+    border-radius: 0;
+    position: relative;
+    transition: background 0.2s, padding-left 0.2s;
   }
 
+  /* Hover left bar */
+  .tool-row::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--terra);
+    transform: scaleY(0);
+    transform-origin: center;
+    transition: transform 0.2s cubic-bezier(0.16,1,0.3,1);
+    border-radius: 0 2px 2px 0;
+  }
+
+  .tool-row:hover {
+    background: var(--cream2);
+    padding-left: 24px;
+  }
+
+  .tool-row:hover::before { transform: scaleY(1); }
   .tool-row:hover .tool-row-name { color: var(--terra); }
   .tool-row:hover .tool-arrow-circle {
     border-color: var(--terra);
-    color: var(--terra);
-    background: var(--terra-soft);
-  }
-
-  .tool-row-left {
-    display: flex;
-    align-items: baseline;
-    gap: 24px;
-    flex: 1;
+    color: var(--white);
+    background: var(--terra);
+    transform: rotate(45deg);
   }
 
   .tool-num {
     font-family: 'DM Mono', monospace;
-    font-size: 11px;
+    font-size: 10px;
     color: var(--muted2);
-    width: 24px;
-    flex-shrink: 0;
-    padding-top: 6px;
+    letter-spacing: 0.04em;
+    align-self: flex-start;
+    padding-top: 8px;
   }
 
   .tool-row-body { flex: 1; }
 
   .tool-row-tag {
-    font-size: 10px;
-    font-weight: 500;
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: var(--terra);
-    margin-bottom: 5px;
+    background: var(--terra-soft);
+    border: 1px solid rgba(196,92,58,0.15);
+    padding: 2px 8px;
+    border-radius: 3px;
+    margin-bottom: 8px;
   }
 
   .tool-row-name {
     font-family: 'Fraunces', serif;
-    font-size: 38px;
+    font-size: 34px;
     font-weight: 700;
     letter-spacing: -0.025em;
     line-height: 1;
     color: var(--black);
-    transition: color 0.15s;
+    transition: color 0.2s;
     margin-bottom: 8px;
   }
 
-  .tool-row-name em {
-    font-style: italic;
-    font-weight: 300;
-    color: var(--terra);
-  }
+  .tool-row-name em { font-style: italic; font-weight: 300; color: inherit; }
 
   .tool-row-desc {
     font-size: 13px;
     color: var(--muted);
     font-weight: 300;
     line-height: 1.65;
-    max-width: 480px;
+    max-width: 520px;
   }
 
   .tool-arrow-circle {
-    width: 48px; height: 48px;
+    width: 44px; height: 44px;
     border: 1.5px solid var(--border2);
     border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
+    font-size: 16px;
     color: var(--muted2);
     flex-shrink: 0;
-    transition: all 0.15s;
+    transition: all 0.2s cubic-bezier(0.16,1,0.3,1);
   }
 
-  /* FOOTER */
+  /* Tool row scroll reveal */
+  .tool-row {
+    opacity: 0;
+    transform: translateY(16px);
+    transition: background 0.2s, padding-left 0.2s, opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .tool-row.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── FOOTER ── */
   .footer {
     background: var(--black);
     border-top: 2px solid var(--terra);
-    padding: 36px 40px;
+    padding: 32px 40px;
   }
 
   .footer-inner {
@@ -327,21 +454,18 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 16px;
   }
 
   .footer-wordmark {
     font-family: 'Fraunces', serif;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 700;
     letter-spacing: -0.02em;
-    color: rgba(255,255,255,0.4);
+    color: rgba(255,255,255,0.35);
   }
 
-  .footer-wordmark em {
-    font-style: italic;
-    font-weight: 300;
-    color: var(--terra-mid);
-  }
+  .footer-wordmark em { font-style: italic; font-weight: 300; color: var(--terra-mid); }
 
   .footer-right {
     display: flex;
@@ -365,49 +489,67 @@
     color: rgba(255,255,255,0.18);
   }
 
-  /* ANIMATIONS */
+  /* ── ANIMATIONS ── */
   @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
+    from { opacity: 0; transform: translateY(24px); }
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  .hero-kicker { animation: fadeUp 0.6s ease both 0.1s; }
-  h1           { animation: fadeUp 0.6s ease both 0.2s; }
-  .hero-desc   { animation: fadeUp 0.6s ease both 0.35s; }
-  .hero-cta    { animation: fadeUp 0.6s ease both 0.45s; }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
 
   @media (max-width: 640px) {
     nav { padding: 0 20px; }
-    .nav-links { display: none; }
-    .hero { padding: 0 20px 48px; }
+    .nav-links { gap: 16px; }
+    .nav-links li:first-child { display: none; }
+    .hero { padding: 0 20px 56px; }
+    h1 { font-size: 60px; }
+    .hero-bottom { flex-direction: column; align-items: flex-start; gap: 20px; }
+    .scroll-hint { display: none; }
     .tools-section { padding: 56px 20px 72px; }
-    .footer { padding: 28px 20px; }
-    h1 { font-size: 64px; }
-    .tool-row-name { font-size: 28px; }
+    .tool-row { grid-template-columns: 20px 1fr auto; padding: 24px 12px; gap: 16px; }
+    .tool-row-name { font-size: 26px; }
+    .footer { padding: 24px 20px; }
   }
 </style>
 </head>
 <body>
 
-<nav>
+<!-- NAV -->
+<nav id="mainNav">
   <div class="nav-inner">
     <span class="wordmark">az<em>-</em>sort</span>
     <ul class="nav-links">
       <li><a href="#tools">Tools</a></li>
-      <li><a href="https://github.com/az-sort" target="_blank">GitHub ↗</a></li>
+      <li><a href="https://github.com/az-sort" target="_blank" class="nav-github">GitHub ↗</a></li>
     </ul>
   </div>
 </nav>
 
+<!-- HERO -->
 <div class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+
   <div class="hero-inner">
     <div class="hero-kicker">Matt's Analytics tools</div>
     <h1>Quick data.<br><em>No headache.</em></h1>
-    <p class="hero-desc">My suite of tools built to make the tedious parts of data work fast.</p>
-    <a class="hero-cta" href="#tools">Check em' out ↓</a>
+    <div class="hero-bottom">
+      <p class="hero-desc">My suite of tools built to make the tedious parts of data work fast.</p>
+      <a class="hero-cta" href="#tools">Check em' out <span class="hero-cta-arrow">↓</span></a>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <div class="scroll-hint-line"></div>
+    <div class="scroll-hint-text">scroll</div>
   </div>
 </div>
 
+<!-- TOOLS -->
 <div class="tools-section" id="tools">
   <div class="tools-inner">
 
@@ -416,50 +558,42 @@
       <div class="section-count">04 tools</div>
     </div>
 
-    <a class="tool-row" href="https://az-sort.github.io/Pivot/" target="_blank">
-      <div class="tool-row-left">
-        <div class="tool-num">01</div>
-        <div class="tool-row-body">
-          <div class="tool-row-tag">Export reformatter</div>
-          <div class="tool-row-name">Pivot</div>
-          <div class="tool-row-desc">Drop your raw Nielsen CMV or GWI export. Get a clean, flat table with all audiences ready for pivoting.</div>
-        </div>
+    <a class="tool-row" href="https://az-sort.github.io/Pivot/" target="_blank" rel="noopener">
+      <div class="tool-num">01</div>
+      <div class="tool-row-body">
+        <div class="tool-row-tag">Export reformatter</div>
+        <div class="tool-row-name">Pivot</div>
+        <div class="tool-row-desc">Drop your raw Nielsen CMV or GWI export. Get a clean, flat table with all audiences ready for pivoting.</div>
       </div>
       <div class="tool-arrow-circle">↗</div>
     </a>
 
-    <a class="tool-row" href="https://az-sort.github.io/GeoMap/" target="_blank">
-      <div class="tool-row-left">
-        <div class="tool-num">02</div>
-        <div class="tool-row-body">
-          <div class="tool-row-tag">Data visualization</div>
-          <div class="tool-row-name">Geo<em>Map</em></div>
-          <div class="tool-row-desc">Upload a Google Trends geography export and understand it right away.</div>
-        </div>
+    <a class="tool-row" href="https://az-sort.github.io/GeoMap/" target="_blank" rel="noopener">
+      <div class="tool-num">02</div>
+      <div class="tool-row-body">
+        <div class="tool-row-tag">Data visualization</div>
+        <div class="tool-row-name">Geo<em>Map</em></div>
+        <div class="tool-row-desc">Upload a Google Trends geography export and understand it right away.</div>
       </div>
       <div class="tool-arrow-circle">↗</div>
     </a>
 
-    <a class="tool-row" href="https://az-sort.github.io/Weather/" target="_blank">
-      <div class="tool-row-left">
-        <div class="tool-num">03</div>
-        <div class="tool-row-body">
-          <div class="tool-row-tag">Trend analysis</div>
-          <div class="tool-row-name">Weather</div>
-          <div class="tool-row-desc">Overlays Google Trends with weather data on one graph. Turns out people google more things when it rains.</div>
-        </div>
+    <a class="tool-row" href="https://az-sort.github.io/Weather/" target="_blank" rel="noopener">
+      <div class="tool-num">03</div>
+      <div class="tool-row-body">
+        <div class="tool-row-tag">Trend analysis</div>
+        <div class="tool-row-name">Weather</div>
+        <div class="tool-row-desc">Overlays Google Trends with weather data on one graph. Turns out people google more things when it rains.</div>
       </div>
       <div class="tool-arrow-circle">↗</div>
     </a>
 
-    <a class="tool-row" href="https://az-sort.github.io/Excel-Renamer/" target="_blank">
-      <div class="tool-row-left">
-        <div class="tool-num">04</div>
-        <div class="tool-row-body">
-          <div class="tool-row-tag">File utility</div>
-          <div class="tool-row-name">Excel <em>Renamer</em></div>
-          <div class="tool-row-desc">Rename a hundred Excel files in the time it takes to rename one.</div>
-        </div>
+    <a class="tool-row" href="https://az-sort.github.io/Excel-Renamer/" target="_blank" rel="noopener">
+      <div class="tool-num">04</div>
+      <div class="tool-row-body">
+        <div class="tool-row-tag">File utility</div>
+        <div class="tool-row-name">Excel <em>Renamer</em></div>
+        <div class="tool-row-desc">Rename a hundred Excel files in the time it takes to rename one.</div>
       </div>
       <div class="tool-arrow-circle">↗</div>
     </a>
@@ -467,6 +601,7 @@
   </div>
 </div>
 
+<!-- FOOTER -->
 <div class="footer">
   <div class="footer-inner">
     <span class="footer-wordmark">az<em>-</em>sort</span>
@@ -477,5 +612,53 @@
   </div>
 </div>
 
+<script>
+  // ── Parallax on hero glow ─────────────────────────────
+  const heroGlow  = document.querySelector('.hero-glow');
+  const heroGlow2 = document.querySelector('.hero-glow2');
+  const hero      = document.querySelector('.hero');
+
+  hero.addEventListener('mousemove', e => {
+    const rect = hero.getBoundingClientRect();
+    const cx = (e.clientX - rect.left) / rect.width;   // 0–1
+    const cy = (e.clientY - rect.top)  / rect.height;  // 0–1
+
+    // Glow moves opposite to cursor — creates depth
+    const offsetX = (cx - 0.5) * -40;
+    const offsetY = (cy - 0.5) * -30;
+    heroGlow.style.transform  = `translate(${offsetX}px, ${offsetY}px)`;
+    heroGlow2.style.transform = `translate(${offsetX * 0.5}px, ${offsetY * 0.5}px)`;
+  });
+
+  hero.addEventListener('mouseleave', () => {
+    heroGlow.style.transform  = 'translate(0,0)';
+    heroGlow2.style.transform = 'translate(0,0)';
+  });
+
+
+  const nav = document.getElementById('mainNav');
+  const onScroll = () => {
+    nav.classList.toggle('scrolled', window.scrollY > 20);
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // ── Tool row scroll reveal ────────────────────────────
+  const rows = document.querySelectorAll('.tool-row');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        // Stagger each row slightly
+        const idx = [...rows].indexOf(entry.target);
+        setTimeout(() => {
+          entry.target.classList.add('visible');
+        }, idx * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+  rows.forEach(row => observer.observe(row));
+</script>
 </body>
 </html>
