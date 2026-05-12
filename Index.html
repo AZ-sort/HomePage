@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AZ-Sort</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;1,9..144,300;1,9..144,700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream:      #faf7f2;
+    --cream2:     #f2ece2;
+    --black:      #1a1714;
+    --text:       #2a2420;
+    --muted:      #7a6f68;
+    --muted2:     #b0a49c;
+    --terra:      #c45c3a;
+    --terra-soft: #faf0ec;
+    --terra-mid:  #d97050;
+    --border:     #e4ddd4;
+    --border2:    #cec5ba;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky;
+    top: 0; z-index: 50;
+    background: var(--black);
+    border-bottom: 2px solid var(--terra);
+    height: 52px;
+    display: flex;
+    align-items: center;
+    padding: 0 40px;
+  }
+
+  .nav-inner {
+    max-width: 1000px;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .wordmark {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+  }
+
+  .wordmark em {
+    font-style: italic;
+    color: var(--terra-mid);
+    font-weight: 300;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 24px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.35);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .nav-links a:hover { color: rgba(255,255,255,0.8); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 40px 64px;
+    background: var(--black);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Dot grid */
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px);
+    background-size: 28px 28px;
+    pointer-events: none;
+  }
+
+  /* Warm glow */
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -100px; right: -100px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(196,92,58,0.2) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  .hero-inner {
+    max-width: 1000px;
+    margin: 0 auto;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-kicker {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--terra-mid);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .hero-kicker::before {
+    content: '';
+    display: block;
+    width: 28px;
+    height: 1px;
+    background: var(--terra-mid);
+  }
+
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(64px, 11vw, 140px);
+    font-weight: 700;
+    line-height: 0.93;
+    letter-spacing: -0.02em;
+    color: #ffffff;
+    margin-bottom: 32px;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--terra-mid);
+    font-weight: 300;
+    display: block;
+  }
+
+  .hero-desc {
+    font-size: 14px;
+    color: rgba(255,255,255,0.4);
+    font-weight: 300;
+    line-height: 1.75;
+    max-width: 380px;
+    margin-bottom: 40px;
+  }
+
+  .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    color: rgba(255,255,255,0.6);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    padding-bottom: 4px;
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  .hero-cta:hover { color: var(--terra-mid); border-color: var(--terra-mid); }
+
+  /* TOOLS SECTION */
+  .tools-section {
+    background: var(--cream);
+    padding: 80px 40px 100px;
+  }
+
+  .tools-inner {
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border2);
+    padding-bottom: 20px;
+    margin-bottom: 0;
+  }
+
+  .section-title {
+    font-family: 'Fraunces', serif;
+    font-size: 42px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--black);
+    line-height: 1;
+  }
+
+  .section-title em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--terra);
+  }
+
+  .section-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted2);
+    letter-spacing: 0.06em;
+  }
+
+  /* TOOL ROWS */
+  .tool-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+    padding: 32px 0;
+    border-bottom: 1px solid var(--border);
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .tool-row:hover .tool-row-name { color: var(--terra); }
+  .tool-row:hover .tool-arrow-circle {
+    border-color: var(--terra);
+    color: var(--terra);
+    background: var(--terra-soft);
+  }
+
+  .tool-row-left {
+    display: flex;
+    align-items: baseline;
+    gap: 24px;
+    flex: 1;
+  }
+
+  .tool-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted2);
+    width: 24px;
+    flex-shrink: 0;
+    padding-top: 6px;
+  }
+
+  .tool-row-body { flex: 1; }
+
+  .tool-row-tag {
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--terra);
+    margin-bottom: 5px;
+  }
+
+  .tool-row-name {
+    font-family: 'Fraunces', serif;
+    font-size: 38px;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1;
+    color: var(--black);
+    transition: color 0.15s;
+    margin-bottom: 8px;
+  }
+
+  .tool-row-name em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--terra);
+  }
+
+  .tool-row-desc {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 300;
+    line-height: 1.65;
+    max-width: 480px;
+  }
+
+  .tool-arrow-circle {
+    width: 48px; height: 48px;
+    border: 1.5px solid var(--border2);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    color: var(--muted2);
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+
+  /* FOOTER */
+  .footer {
+    background: var(--black);
+    border-top: 2px solid var(--terra);
+    padding: 36px 40px;
+  }
+
+  .footer-inner {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .footer-wordmark {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: rgba(255,255,255,0.4);
+  }
+
+  .footer-wordmark em {
+    font-style: italic;
+    font-weight: 300;
+    color: var(--terra-mid);
+  }
+
+  .footer-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 3px;
+  }
+
+  .footer-handle {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: rgba(255,255,255,0.2);
+    letter-spacing: 0.06em;
+  }
+
+  .footer-tagline {
+    font-family: 'Fraunces', serif;
+    font-size: 12px;
+    font-style: italic;
+    font-weight: 300;
+    color: rgba(255,255,255,0.18);
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-kicker { animation: fadeUp 0.6s ease both 0.1s; }
+  h1           { animation: fadeUp 0.6s ease both 0.2s; }
+  .hero-desc   { animation: fadeUp 0.6s ease both 0.35s; }
+  .hero-cta    { animation: fadeUp 0.6s ease both 0.45s; }
+
+  @media (max-width: 640px) {
+    nav { padding: 0 20px; }
+    .nav-links { display: none; }
+    .hero { padding: 0 20px 48px; }
+    .tools-section { padding: 56px 20px 72px; }
+    .footer { padding: 28px 20px; }
+    h1 { font-size: 64px; }
+    .tool-row-name { font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <span class="wordmark">az<em>-</em>sort</span>
+    <ul class="nav-links">
+      <li><a href="#tools">Tools</a></li>
+      <li><a href="https://github.com/az-sort" target="_blank">GitHub ↗</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-kicker">Analytics tool suite</div>
+    <h1>Good data.<br><em>No headache.</em></h1>
+    <p class="hero-desc">A small suite of tools built to make the boring parts of data work fast.</p>
+    <a class="hero-cta" href="#tools">See the tools ↓</a>
+  </div>
+</div>
+
+<div class="tools-section" id="tools">
+  <div class="tools-inner">
+
+    <div class="section-header">
+      <div class="section-title">What's<br><em>Cookin'</em></div>
+      <div class="section-count">04 tools</div>
+    </div>
+
+    <a class="tool-row" href="https://az-sort.github.io/Pivot/" target="_blank">
+      <div class="tool-row-left">
+        <div class="tool-num">01</div>
+        <div class="tool-row-body">
+          <div class="tool-row-tag">Export reformatter</div>
+          <div class="tool-row-name">Pivot</div>
+          <div class="tool-row-desc">Drop your raw Nielsen CMV or GWI export. Get a clean, flat table with all audiences unpivoted.</div>
+        </div>
+      </div>
+      <div class="tool-arrow-circle">↗</div>
+    </a>
+
+    <a class="tool-row" href="https://az-sort.github.io/GeoMap/" target="_blank">
+      <div class="tool-row-left">
+        <div class="tool-num">02</div>
+        <div class="tool-row-body">
+          <div class="tool-row-tag">Data visualization</div>
+          <div class="tool-row-name">Geo<em>Map</em></div>
+          <div class="tool-row-desc">Upload a Google Trends geography export and understand it right away.</div>
+        </div>
+      </div>
+      <div class="tool-arrow-circle">↗</div>
+    </a>
+
+    <a class="tool-row" href="https://az-sort.github.io/Weather/" target="_blank">
+      <div class="tool-row-left">
+        <div class="tool-num">03</div>
+        <div class="tool-row-body">
+          <div class="tool-row-tag">Trend analysis</div>
+          <div class="tool-row-name">Weather</div>
+          <div class="tool-row-desc">Overlays Google Trends with weather data on one graph. Turns out people google more things when it rains.</div>
+        </div>
+      </div>
+      <div class="tool-arrow-circle">↗</div>
+    </a>
+
+    <a class="tool-row" href="https://az-sort.github.io/Excel-Renamer/" target="_blank">
+      <div class="tool-row-left">
+        <div class="tool-num">04</div>
+        <div class="tool-row-body">
+          <div class="tool-row-tag">File utility</div>
+          <div class="tool-row-name">Excel <em>Renamer</em></div>
+          <div class="tool-row-desc">Rename a hundred Excel files in the time it takes to rename one.</div>
+        </div>
+      </div>
+      <div class="tool-arrow-circle">↗</div>
+    </a>
+
+  </div>
+</div>
+
+<div class="footer">
+  <div class="footer-inner">
+    <span class="footer-wordmark">az<em>-</em>sort</span>
+    <div class="footer-right">
+      <span class="footer-handle">github.com/az-sort</span>
+      <span class="footer-tagline">Good data. No headache.</span>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
